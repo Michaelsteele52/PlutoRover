@@ -1,0 +1,3 @@
+I think it's all finished, worked using TDD.
+I would have preferred to make it so the testcases knew the size of the grid inside Pluto, with more time that would be a start.
+I spent some time thinking about the wrap around, I feel it is elegant as it works in both directions but I would like to clean up the move method with more time.
