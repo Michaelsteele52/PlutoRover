@@ -18,36 +18,44 @@ namespace PlutoRover
         public readonly List<string> Directions = new List<string>(){"N","E","S","W"};
         public int PosX;
         public int PosY;
+        private bool _obstacle;
         public Rover(int posX, int posY)
         {
             CurrentDirection = Directions[0];
             PosX = posX;
             PosY = posY;
+            _obstacle = false;
         }
 
         
 
 
-        public string Instruct(string instruction)
+        public string Instruct(string instruction, Pluto pluto)
         {
-            if (!Enum.IsDefined(typeof(TurnInstructions), instruction))
+            if (Enum.IsDefined(typeof(TurnInstructions), instruction))
             {
-                return "Invalid Instruction";
+                Turn(instruction);
+                return "Turned";
             }
-            else if(!Enum.IsDefined(typeof(MoveInstructions), instruction))
+            else if(Enum.IsDefined(typeof(MoveInstructions), instruction))
             {
-                return "Invalid Instruction";
+                Move(instruction, pluto);
+                return "Moved";
             }
-
-            return "";
+            return "Invalid Instruction";
         }
 
-        public string ExecuteInstructions(string badInput)
+        public string ExecuteInstructions(string badInput, Pluto pluto)
         {
             foreach (var c in badInput)
             {
-                var result = Instruct(c.ToString());
+                var result = Instruct(c.ToString(), pluto);
                 if (result == "Invalid Instruction")
+                {
+                    return result;
+                }
+
+                if (result == "Obstacle")
                 {
                     return result;
                 }
@@ -63,12 +71,13 @@ namespace PlutoRover
                 change = -1;
             else if (instruction == "R")
                 change = 1;
+
             var direction = Directions.IndexOf(CurrentDirection);
             CurrentDirection = Directions[(direction + change + Directions.Count) % Directions.Count];
             return "Turned";
         }
 
-        public void Move(string instruction)
+        public string Move(string instruction, Pluto pluto)
         {
             var displacement = 0;
             if (CurrentDirection == "N" || CurrentDirection == "S")
@@ -78,14 +87,18 @@ namespace PlutoRover
                 {
                     displacement = -1;
                 }
-
                 if (instruction == "B")
                 {
                     displacement *= -1;
                 }
-
-                PosY = (PosY + displacement + 100) % 100;
+                if(pluto.Grid[0][(PosY + displacement + pluto.YSize) % pluto.YSize].Obstacle)
+                {
+                    _obstacle = true;
+                    return "Obstacle";
+                }
+                PosY = (PosY + displacement + pluto.YSize) % pluto.YSize;
             }
+
             if (CurrentDirection == "E" || CurrentDirection == "W")
             {
                 displacement = 1;
@@ -99,8 +112,17 @@ namespace PlutoRover
                     displacement *= -1;
                 }
 
-                PosY = (PosX + displacement + 100) % 100;
+                if (pluto.Grid[(PosX + displacement + pluto.XSize) % pluto.XSize][0].Obstacle)
+                {
+                    _obstacle = true;
+                    return "Obstacle";
+                }
+
+                PosX = (PosX + displacement + pluto.XSize) % pluto.XSize;
             }
+
+            return "Successful Move";
         }
+
     }
 }
