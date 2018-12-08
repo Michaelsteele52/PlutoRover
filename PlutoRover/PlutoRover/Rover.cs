@@ -42,12 +42,11 @@ namespace PlutoRover
             return "";
         }
 
-        public string ExecuteInstructions(string badinput)
+        public string ExecuteInstructions(string badInput)
         {
-            var result = "";
-            foreach (var c in badinput)
+            foreach (var c in badInput)
             {
-                result = Instruct(c.ToString());
+                var result = Instruct(c.ToString());
                 if (result == "Invalid Instruction")
                 {
                     return result;
@@ -86,6 +85,21 @@ namespace PlutoRover
                 }
 
                 PosY = (PosY + displacement + 100) % 100;
+            }
+            if (CurrentDirection == "E" || CurrentDirection == "W")
+            {
+                displacement = 1;
+                if (CurrentDirection == "W")
+                {
+                    displacement = -1;
+                }
+
+                if (instruction == "B")
+                {
+                    displacement *= -1;
+                }
+
+                PosY = (PosX + displacement + 100) % 100;
             }
         }
     }

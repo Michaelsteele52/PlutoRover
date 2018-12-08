@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Security.Cryptography.X509Certificates;
 using FluentAssertions;
 using NUnit.Framework;
 
@@ -37,11 +38,24 @@ namespace PlutoRover.Tests
         }
 
         [TestCase("F", 1)]
-        public void Move(string instuction, int position)
+        [TestCase("B", 99)]
+        public void Move(string instruction, int position)
         {
-            _rover.Move(instuction);
+            _rover.Move(instruction);
             _rover.PosX.Should().Be(0);
             _rover.PosY.Should().Be(position);
+        }
+
+        [TestCase("R", "F", 0, 1)]
+        [TestCase("R", "B", 0, 99)]
+        [TestCase("L", "F", 0, 99)]
+        [TestCase("L", "B", 0, 1)]
+        public void TurnAndMove(string turnInstruction, string moveInstruction, int xPosition, int yPosition)
+        {
+            _rover.Turn(turnInstruction);
+            _rover.Move(moveInstruction);
+            _rover.PosX.Should().Be(xPosition);
+            _rover.PosY.Should().Be(yPosition);
         }
     }
 }
