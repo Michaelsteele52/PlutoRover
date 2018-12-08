@@ -34,22 +34,21 @@ namespace PlutoRover
         {
             if (Enum.IsDefined(typeof(TurnInstructions), instruction))
             {
-                Turn(instruction);
-                return "Turned";
+                return Turn(instruction);
             }
             else if(Enum.IsDefined(typeof(MoveInstructions), instruction))
             {
-                Move(instruction, pluto);
-                return "Moved";
+                return Move(instruction, pluto);
             }
             return "Invalid Instruction";
         }
 
         public string ExecuteInstructions(string badInput, Pluto pluto)
         {
+            var result = "";
             foreach (var c in badInput)
             {
-                var result = Instruct(c.ToString(), pluto);
+                result = Instruct(c.ToString(), pluto);
                 if (result == "Invalid Instruction")
                 {
                     return result;
@@ -61,7 +60,7 @@ namespace PlutoRover
                 }
             }
 
-            return "Arrived";
+            return result;
         }
 
         public string Turn(string instruction)
