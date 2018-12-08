@@ -20,5 +20,12 @@ namespace PlutoRover.Tests
             var result = _rover.Instruct("BadInput");
             result.Should().Be("Invalid Instruction");
         }
+
+        [Test]
+        public void NotCarryOutNextInstructionsIfBadInput()
+        {
+            var result = _rover.ExecuteInstructions("BadInput");
+            result.Should().Be("Invalid Instruction");
+        }
     }
 }

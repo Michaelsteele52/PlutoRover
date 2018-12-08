@@ -30,5 +30,20 @@ namespace PlutoRover
 
             return "";
         }
+
+        public string ExecuteInstructions(string badinput)
+        {
+            var result = "";
+            foreach (var c in badinput)
+            {
+                result = Instruct(c.ToString());
+                if (result == "Invalid Instruction")
+                {
+                    return result;
+                }
+            }
+
+            return "Arrived";
+        }
     }
 }
