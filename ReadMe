@@ -1,3 +1,21 @@
-I think it's all finished, worked using TDD.
-I would have preferred to make it so the testcases knew the size of the grid inside Pluto, with more time that would be a start.
-I spent some time thinking about the wrap around, I feel it is elegant as it works in both directions but I would like to clean up the move method with more time.
+Intial Thoughts on Completion:
+- I think it's all finished, worked using TDD.
+- I would have preferred to make it so the Testcases knew the size of the grid inside Pluto, by passing in the size as a variable in each testCase.
+- I spent some time thinking about the wrap around, I feel it is elegant as it works in both directions but I would like to clean up the move method with more time.
+
+Development Process:
+- Built using Tdd focusing on the input, through to use of instructions, to stopping when necessary.
+
+What I would change:
+- All the methods in the Rover are public, I would refactor the methods to be private other than the ExecuteInstructions() method. It was made public for the tests as it was developed. The final class library would not remain as such.
+- I used resharper to make methods for from the tests, which is why the argument is poorly named as badInput in the ExecuteInstructions method. I would refactor to make more sense, Uncle Bob would be upset (Clean Code reference).
+- String returns, to make the development easy to debug, which helped me as I got caught, I made it so the methods returned strings. Although I would have them be either void methods for moving and turning, or if requiring a return, return and object or put it inside a try-catch with custom exceptions for obstacle and unexpected inputs.
+- Direction naming, I would change the to North, South, East, West to be clearer.
+- I have also noticed that you could create a Rover which starts out of bounds of the Pluto grid. So I would make it so a check was in place to check the size of pluto when constructing a new Rover. I would be concerned by coupling though.
+- Would clean up Move method, potentially making it a boolean method for obstacles and making the it so the ExecuteInstructions() method was a while loop. I am not sure if that would be better than the current foreach or just a different implementation.
+
+Ideas for future use:
+- I imagine that Nasa would want to use some of this code again for newer rovers. And would also want to use the code for exploring new planets. So I would look to make an IWorld interface which Pluto would inherit from, and a IRover Interface for Rover to inherit from.
+
+Final Thoughts:
+  I am very grateful the opportunity and have put a lot of thought and consideration into this piece of work. All feedback is most welcome and I would be happy to clarify any of the work I have done.
