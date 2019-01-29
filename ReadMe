@@ -17,5 +17,3 @@ What I would change:
 Ideas for future use:
 - I imagine that Nasa would want to use some of this code again for newer rovers. And would also want to use the code for exploring new planets. So I would look to make an IWorld interface which Pluto would inherit from, and a IRover Interface for Rover to inherit from.
 
-Final Thoughts:
-  I am very grateful the opportunity and have put a lot of thought and consideration into this piece of work. All feedback is most welcome and I would be happy to clarify any of the work I have done.
