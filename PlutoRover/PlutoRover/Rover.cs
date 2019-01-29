@@ -90,7 +90,7 @@ namespace PlutoRover
                 {
                     displacement *= -1;
                 }
-                if(pluto.Grid[0][(PosY + displacement + pluto.YSize) % pluto.YSize].Obstacle)
+                if(pluto.Grid[PosX][(PosY + displacement + pluto.YSize) % pluto.YSize].Obstacle)
                 {
                     _obstacle = true;
                     return "Obstacle";
@@ -111,7 +111,7 @@ namespace PlutoRover
                     displacement *= -1;
                 }
 
-                if (pluto.Grid[(PosX + displacement + pluto.XSize) % pluto.XSize][0].Obstacle)
+                if (pluto.Grid[(PosX + displacement + pluto.XSize) % pluto.XSize][PosY].Obstacle)
                 {
                     _obstacle = true;
                     return "Obstacle";
