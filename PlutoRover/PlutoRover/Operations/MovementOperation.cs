@@ -5,19 +5,21 @@ using PlutoRover.Instructions;
 
 namespace PlutoRover.Strategies
 {
-    public static class MovementStrategy
+    public class MovementOperation : IInstructionOperation
     {
-        private const string Success = "Successful Move";
-        public static string Move(Rover rover, MoveInstructions instruction, Pluto pluto)
+        private const string Success = "Successful Execute";
+        public string Execute(Instruction instruction)
         {
-            switch (rover.CurrentDirection)
+            var instructionEnum = instruction.GetInstruction().AsT1;
+
+            switch (instruction.Rover.CurrentDirection)
             {
                 case "N":
                 case "S":
-                    return LatitudinalMovement(rover, instruction, pluto);
+                    return LatitudinalMovement(instruction.Rover, instructionEnum, instruction.Pluto);
                 case "E":
                 case "W":
-                    return LongitudinalMovement(rover, instruction, pluto);
+                    return LongitudinalMovement(instruction.Rover, instructionEnum, instruction.Pluto);
                 default:
                     return "Failure";
             }

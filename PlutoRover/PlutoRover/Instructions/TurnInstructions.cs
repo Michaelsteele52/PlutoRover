@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace PlutoRover.Instructions
+﻿namespace PlutoRover.Instructions
 {
     public enum TurnInstructions
     {

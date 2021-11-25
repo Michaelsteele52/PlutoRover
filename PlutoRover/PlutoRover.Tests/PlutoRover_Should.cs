@@ -14,25 +14,44 @@ namespace PlutoRover.Tests
         private Pluto _pluto;
         private readonly int XSize = 100;
         private readonly int YSize = 100;
+        private TurnOperation _turnOperation;
+        private MovementOperation _movementOperation;
+        private IRoverService _service;
+
         [SetUp]
         public void SetUp()
         {
             _rover = new Rover(0,0);
             _pluto = new Pluto(XSize, YSize);
+            _turnOperation = new TurnOperation();
+            _movementOperation = new MovementOperation();
+            _service = new RoverService();
         }
 
         [Test]
         public void RejectBadInstructions()
         {
-            var result = RoverService.ExecuteInstructions(_rover,"BadInput", _pluto);
-            result.Should().Be("Invalid Instruction");
+            var result = _service.ExecuteInstructions(_rover,"a", _pluto);
+            result.Should().Be("a is not a valid Instruction");
         }
 
         [Test]
         public void NotCarryOutNextInstructionsIfBadInput()
         {
-            var result = RoverService.ExecuteInstructions(_rover, "BadInput", _pluto);
-            result.Should().Be("Invalid Instruction");
+            var result = _service.ExecuteInstructions(_rover, "af", _pluto);
+
+            result.Should().Be("a is not a valid Instruction");
+            _rover.PosY.Should().Be(0);
+            _rover.PosX.Should().Be(0);
+        }
+
+        [Test]
+        public void ShouldHandleDifferentCases()
+        {
+            var instructionString = "fFbBlLrR";
+
+            var result = _service.ExecuteInstructions(_rover, instructionString, _pluto);
+            result.Should().Be("Success");
         }
 
         [TestCase(1, "E")]
@@ -49,15 +68,17 @@ namespace PlutoRover.Tests
         [TestCase(TurnInstructions.R, "E")]
         public void Turn(TurnInstructions input, string output)
         {
-            TurnStrategy.Turn(_rover, input);
+            var instruction = new Instruction(_pluto, _rover, input.ToString());
+            _turnOperation.Execute(instruction);
             _rover.CurrentDirection.Should().Be(output);
         }
 
         [TestCase(MoveInstructions.F, 1)]
         [TestCase(MoveInstructions.B, 99)]
-        public void Move(MoveInstructions instruction, int position)
+        public void Move(MoveInstructions input, int position)
         {
-            MovementStrategy.Move(_rover, instruction, _pluto);
+            var instruction = new Instruction(_pluto, _rover, input.ToString());
+            _movementOperation.Execute(instruction);
             _rover.PosX.Should().Be(0);
             _rover.PosY.Should().Be(position);
         }
@@ -68,8 +89,10 @@ namespace PlutoRover.Tests
         [TestCase(TurnInstructions.L, MoveInstructions.B, 0, 1)]
         public void TurnAndMove(TurnInstructions turnInstruction, MoveInstructions moveInstruction, int yPosition, int xPosition)
         {
-            TurnStrategy.Turn(_rover, turnInstruction);
-            MovementStrategy.Move(_rover, moveInstruction, _pluto);
+            var firstInstruction = new Instruction(_pluto, _rover, turnInstruction.ToString());
+            var secondInstruction = new Instruction(_pluto, _rover, moveInstruction.ToString());
+            _turnOperation.Execute(firstInstruction);
+            _movementOperation.Execute(secondInstruction);
             _rover.PosY.Should().Be(yPosition);
             _rover.PosX.Should().Be(xPosition);
         }
@@ -77,8 +100,11 @@ namespace PlutoRover.Tests
         [Test]
         public void ShouldWrapAround()
         {
-            TurnStrategy.Turn(_rover, TurnInstructions.L);
-            MovementStrategy.Move(_rover, MoveInstructions.F, _pluto);
+            var turnInstruction = new Instruction(_pluto, _rover, TurnInstructions.L.ToString());
+            var moveInstruction = new Instruction(_pluto, _rover, MoveInstructions.F.ToString());
+
+            _turnOperation.Execute(turnInstruction);
+            _movementOperation.Execute(moveInstruction);
             _rover.PosY.Should().Be(0);
             _rover.PosX.Should().Be(99);
         }
@@ -86,8 +112,9 @@ namespace PlutoRover.Tests
         [Test]
         public void StopIfObstacle()
         {
+            var moveInstruction = new Instruction(_pluto, _rover, MoveInstructions.F.ToString());
             _pluto.Grid[0][1].IsObstacle = true;
-            var result = MovementStrategy.Move(_rover, MoveInstructions.F, _pluto);
+            var result = _movementOperation.Execute(moveInstruction);
             result.Should().Be("IsObstacle");
         }
 
@@ -95,7 +122,7 @@ namespace PlutoRover.Tests
         public void NotCarryOutNextInstructionIfObstacle()
         {
             _pluto.Grid[0][1].IsObstacle = true;
-            var result = RoverService.ExecuteInstructions(_rover,"F", _pluto);
+            var result = _service.ExecuteInstructions(_rover,"F", _pluto);
             result.Should().Be("IsObstacle");
         }
     }

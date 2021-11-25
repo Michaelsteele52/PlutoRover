@@ -6,18 +6,20 @@ using PlutoRover.Strategies;
 
 namespace PlutoRover
 {
-    public class RoverService
+    public class RoverService : IRoverService
     {
-        public static string ExecuteInstructions(Rover rover, string instructions, Pluto pluto)
+        public string ExecuteInstructions(Rover rover, string instructions, Pluto pluto)
         {
             var result = "";
             foreach (var c in instructions)
             {
-                result = Instruct(rover, c.ToString(), pluto);
-                if (result == "Invalid Instruction")
-                {
-                    return result;
-                }
+                IInstructionOperation operation = null;
+
+                operation = Instruct(rover, c.ToString(), pluto);
+                if (operation == null) return $"{c} is not a valid Instruction";
+                var instruction = new Instruction(pluto, rover, c.ToString());
+
+                result = operation.Execute(instruction);
 
                 if (result == "IsObstacle")
                 {
@@ -27,13 +29,13 @@ namespace PlutoRover
             return result;
         }
 
-        private static string Instruct(Rover rover, string instruction, Pluto pluto)
+        private static IInstructionOperation Instruct(Rover rover, string instruction, Pluto pluto)
         {
-            if (Enum.TryParse<TurnInstructions>(instruction, out var turnInstruction)) return TurnStrategy.Turn(rover, turnInstruction);
+            if (Enum.TryParse<TurnInstructions>(instruction, true, out var turnInstruction)) return new TurnOperation();
 
-            if (Enum.TryParse<MoveInstructions>(instruction, out var moveInstruction)) return MovementStrategy.Move(rover, moveInstruction, pluto);
+            if (Enum.TryParse<MoveInstructions>(instruction, true, out var moveInstruction)) return new MovementOperation();
 
-            return "Invalid Instruction";
+            return null;
         }
     }
 }
